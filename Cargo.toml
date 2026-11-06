@@ -1,0 +1,15 @@
+[package]
+name = "azphysics"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+description = "Physikalische Modelle und Simulationen auf mathematischen Werkzeugen aus azmath (Projektgerüst)"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Andie2302/azphysics"
+readme = "README.md"
+publish = false
+
+[features]
+default = ["std"]
+std = []
+alloc = []
