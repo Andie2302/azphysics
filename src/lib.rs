@@ -1,6 +1,6 @@
 //! Physikalische Modelle und Simulationen für das az-Projekt.
 //!
-//! Aktueller Stand: Projektgerüst ohne implementierte Physikverfahren.
+//! Punktmassenmodelle für freien Flug, konstante Beschleunigung und harmonische Oszillatoren.
 //! Mathematische Werkzeuge werden direkt aus einer festgelegten azmath-Revision
 //! bezogen; std/libm/micromath und alloc werden als Features weitergeleitet. Die gemeinsame
 //! Planung liegt unter <https://github.com/Andie2302/aztodo>.
@@ -12,3 +12,7 @@ extern crate std;
 
 /// Gemeinsame Zahlengrundlage aus azmath; Backend-Auswahl über die Crate-Features.
 pub use azmath::Real;
+
+mod error;
+pub mod mechanics;
+pub use error::PhysicsError;
