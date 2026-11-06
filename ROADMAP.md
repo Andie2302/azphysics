@@ -5,8 +5,8 @@ Die zentrale Planung liegt in
 
 - AZP-001: Gerüst 0.0.1 vorhanden; noch keine physikalischen Verfahren.
 - AZP-002: Direkte azmath-Git-Abhängigkeit mit festem rev und Backend-/alloc-Weiterleitung geprüft.
-- AZP-010: Einheiten, Zustände, Fehlerdiagnosen und Modellkonventionen festlegen.
-- AZP-020: Erste analytisch prüfbare Modelle nach Freigabe der mathematischen Basis.
+- AZP-010: SI-Konventionen, geprüfter Zustand und Fehlerdiagnosen implementiert.
+- AZP-020: Freier Flug, konstante Beschleunigung und harmonischer Oszillator mit azmath-Verlet implementiert.
 - AZP-030/040: Räumliche Suche und XPBD.
 - AZP-051/050: Druckprojektion und APIC/FLIP.
 - AZP-060/070: Materialmodelle und spätere weitere Physikgebiete.

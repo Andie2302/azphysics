@@ -1,0 +1,54 @@
+use core::fmt;
+
+/// Fehler bei Modellparametern, Zuständen und Integration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum PhysicsError {
+    /// Ein Zustand benötigt mindestens eine Koordinate.
+    InvalidDimension,
+    /// Masse muss positiv und endlich sein.
+    InvalidMass,
+    /// Federkonstante muss nichtnegativ und endlich sein.
+    InvalidStiffness,
+    /// Schrittweite muss endlich, ungleich null und halbierbar sein.
+    InvalidTimeStep,
+    /// Mindestens ein Schritt ist erforderlich.
+    InvalidStepCount,
+    /// Nichtendlicher Zustand, Parameter oder Rechenwert.
+    NotFinite,
+    /// Eine benötigte positive Modellskala ist im Zahlentyp nicht darstellbar.
+    NumericalRange,
+    /// Fehler des mathematischen Integrators; letzter vollständiger Schritt bleibt erhalten.
+    Integration(azmath::ode::OdeError),
+}
+impl fmt::Display for PhysicsError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::InvalidDimension => f.write_str("mindestens eine Koordinate erforderlich"),
+            Self::InvalidMass => f.write_str("Masse muss endlich und positiv sein"),
+            Self::InvalidStiffness => {
+                f.write_str("Federkonstante muss endlich und nichtnegativ sein")
+            }
+            Self::InvalidTimeStep => {
+                f.write_str("Schrittweite muss endlich, ungleich null und halbierbar sein")
+            }
+            Self::InvalidStepCount => f.write_str("mindestens ein Zeitschritt erforderlich"),
+            Self::NotFinite => f.write_str("nichtendlicher Zustand, Parameter oder Rechenwert"),
+            Self::NumericalRange => f.write_str("Modellskala im Zahlentyp nicht darstellbar"),
+            Self::Integration(e) => write!(f, "Integration: {e}"),
+        }
+    }
+}
+impl core::error::Error for PhysicsError {
+    fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
+        match self {
+            Self::Integration(e) => Some(e),
+            _ => None,
+        }
+    }
+}
+impl From<azmath::ode::OdeError> for PhysicsError {
+    fn from(e: azmath::ode::OdeError) -> Self {
+        Self::Integration(e)
+    }
+}

@@ -3,7 +3,7 @@ name = "azphysics"
 version = "0.0.1"
 edition = "2024"
 rust-version = "1.85"
-description = "Physikalische Modelle und Simulationen auf mathematischen Werkzeugen aus azmath (Projektgerüst)"
+description = "Experimentelle Punktmassenmodelle und Simulationen auf mathematischen Werkzeugen aus azmath"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/Andie2302/azphysics"
 readme = "README.md"
@@ -17,4 +17,4 @@ libm = ["azmath/libm"]
 micromath = ["azmath/micromath"]
 
 [dependencies]
-azmath = { git = "https://github.com/Andie2302/azmath", rev = "c839bc7f2d83c6f4a2a9baef20abda2ea03fc2a9", default-features = false }
+azmath = { git = "https://github.com/Andie2302/azmath", rev = "3c6068a5f218aaba940a85a73606c9f61c8ebdc9", default-features = false }
