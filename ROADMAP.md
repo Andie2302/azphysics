@@ -3,7 +3,7 @@
 Die zentrale Planung liegt in
 [aztodo](https://github.com/Andie2302/aztodo/blob/master/ROADMAP.md).
 
-- AZP-001: Gerüst 0.0.1 vorhanden; noch keine physikalischen Verfahren.
+- AZP-001: Ursprüngliches Gerüst 0.0.1 vorhanden; die ersten Modelle stehen unter AZP-020.
 - AZP-002: Direkte azmath-Git-Abhängigkeit mit festem rev und Backend-/alloc-Weiterleitung geprüft.
 - AZP-010: SI-Konventionen, geprüfter Zustand und Fehlerdiagnosen implementiert.
 - AZP-020: Freier Flug, konstante Beschleunigung und harmonischer Oszillator mit azmath-Verlet implementiert.

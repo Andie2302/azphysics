@@ -40,14 +40,18 @@ Build. Hier verwenden wir ausdrücklich die feste Revision.
 `FreeParticle`, `ConstantAcceleration` und `HarmonicOscillator` ergänzen Masse,
 Beschleunigungsfeld bzw. Federparameter. Getter, Energie in J und Impuls in
 kg*m/s sowie Fehlerfälle sind dokumentiert. Details:
-[Mechanik-Konventionen](docs/CONVENTIONS.md).
+[Mechanik-Konventionen](docs/CONVENTIONS.md) und
+[CI-/Referenznachweise](docs/VALIDATION.md).
 
 ```rust
 use azphysics::mechanics::{State, HarmonicOscillator, mechanics_work_len};
-let model = HarmonicOscillator::new(2.0f64, 8.0, [0.0])?;
-let mut state = State::new([1.0], [0.0])?;
-let mut work = [0.0; mechanics_work_len(1)];
-model.integrate(&mut state, 0.0, 0.01, 1000, &mut work, |_, _| {})?;
+fn main() -> Result<(), azphysics::PhysicsError> {
+    let model = HarmonicOscillator::new(2.0f64, 8.0, [0.0])?;
+    let mut state = State::new([1.0], [0.0])?;
+    let mut work = [0.0; mechanics_work_len(1)];
+    model.integrate(&mut state, 0.0, 0.01, 1000, &mut work, |_, _| {})?;
+    Ok(())
+}
 ```
 
 Ausführbares Beispiel: `cargo run --locked --example 01_oscillator`.
