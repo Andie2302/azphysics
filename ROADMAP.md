@@ -4,6 +4,7 @@ Die zentrale Planung liegt in
 [aztodo](https://github.com/Andie2302/aztodo/blob/master/ROADMAP.md).
 
 - AZP-001: Gerüst 0.0.1 vorhanden; noch keine physikalischen Verfahren.
+- AZP-002: Direkte azmath-Git-Abhängigkeit mit festem rev und Backend-/alloc-Weiterleitung geprüft.
 - AZP-010: Einheiten, Zustände, Fehlerdiagnosen und Modellkonventionen festlegen.
 - AZP-020: Erste analytisch prüfbare Modelle nach Freigabe der mathematischen Basis.
 - AZP-030/040: Räumliche Suche und XPBD.

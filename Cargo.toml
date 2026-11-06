@@ -11,5 +11,10 @@ publish = false
 
 [features]
 default = ["std"]
-std = []
-alloc = []
+std = ["azmath/std"]
+alloc = ["azmath/alloc"]
+libm = ["azmath/libm"]
+micromath = ["azmath/micromath"]
+
+[dependencies]
+azmath = { git = "https://github.com/Andie2302/azmath", rev = "c839bc7f2d83c6f4a2a9baef20abda2ea03fc2a9", default-features = false }
