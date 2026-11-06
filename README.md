@@ -10,9 +10,9 @@ Referenztests. `std` ist standardmäßig aktiviert. Eine azmath-Abhängigkeit un
 numerische Backend-Features werden beim ersten Modell ergänzt und geprüft.
 
 Die gemeinsame Planung liegt in [aztodo](https://github.com/Andie2302/aztodo):
-[Roadmap](https://github.com/Andie2302/aztodo/blob/main/ROADMAP.md),
-[Aufgaben](https://github.com/Andie2302/aztodo/blob/main/BACKLOG.md) und
-[Architektur](https://github.com/Andie2302/aztodo/blob/main/ARCHITECTURE.md).
+[Roadmap](https://github.com/Andie2302/aztodo/blob/master/ROADMAP.md),
+[Aufgaben](https://github.com/Andie2302/aztodo/blob/master/BACKLOG.md) und
+[Architektur](https://github.com/Andie2302/aztodo/blob/master/ARCHITECTURE.md).
 
 Geplant sind zunächst physikalische Konventionen und analytisch prüfbare
 Referenzmodelle. Danach können XPBD, räumliche Nachbarschaftssuche,
