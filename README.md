@@ -13,11 +13,11 @@ Referenztests folgen dem Aufbau von azmath.
 
 ```toml
 [dependencies]
-azmath = { git = "https://github.com/Andie2302/azmath", rev = "3c6068a5f218aaba940a85a73606c9f61c8ebdc9", default-features = false }
+azmath = { git = "https://github.com/Andie2302/azmath", rev = "75c5dc04c51ddf02568f15f4ab3c46f7ba4c2c7c", default-features = false }
 ```
 
-Geprüfte Revision: [`3c6068a5`](https://github.com/Andie2302/azmath/commit/3c6068a5f218aaba940a85a73606c9f61c8ebdc9).
-Die zugehörige Verlet-Dokumentations-PR wurde nach 18 erfolgreichen CI-Prüfungen gemergt. `Cargo.lock` hält
+Geprüfte Revision: [`75c5dc04`](https://github.com/Andie2302/azmath/commit/75c5dc04c51ddf02568f15f4ab3c46f7ba4c2c7c).
+Die zugehörige Gauss–Legendre-PR (#7) wurde nach 18 erfolgreichen CI-Prüfungen gemergt. `Cargo.lock` hält
 zusätzlich den aufgelösten Git-Commit und die weiteren Abhängigkeiten fest.
 Ein neuer Commit auf `master` ändert diese Abhängigkeit **nicht automatisch**.
 Auch `cargo update` zieht bei festem `rev` keinen anderen azmath-Commit heran.
@@ -26,7 +26,7 @@ Eine Branch-Umbenennung beeinflusst diese Commit-Bindung ebenfalls nicht.
 Ein bewusstes Update besteht aus drei Schritten:
 
 1. Neue geprüfte SHA in `Cargo.toml` unter `rev` eintragen.
-2. Mit `cargo check` das Lockfile aktualisieren und die CI-Prüfmatrix ausführen.
+2. Mit `cargo update -p azmath` das Lockfile aktualisieren und die CI-Prüfmatrix ausführen.
 3. `Cargo.toml` und `Cargo.lock` gemeinsam committen; Revision und Nachweise in
    [aztodo/STATUS.md](https://github.com/Andie2302/aztodo/blob/master/STATUS.md) aktualisieren.
 
@@ -54,7 +54,15 @@ fn main() -> Result<(), azphysics::PhysicsError> {
 }
 ```
 
-Ausführbares Beispiel: `cargo run --locked --example 01_oscillator`.
+Ausführbare Beispiele: `cargo run --locked --example 01_oscillator` und
+`cargo run --locked --example 02_integrator_comparison`.
+
+Der zweite Lauf vergleicht Verlet (Ordnung 2) und implizites Gauss–Legendre-RK
+(Ordnung 4) am selben Oszillator. Er zeigt dimensionslos skalierte Zustandsfehler,
+maximale relative Energiefehler sowie Funktions-/Jacobi-Auswertungen. Gleiche
+Schrittzahlen bedeuten keinen gleichen Rechenaufwand; eine Laufzeitmessung
+ist dieser Vergleich nicht. Gauss–Legendre erhält die quadratische Energie bei
+exakt gelösten Stufen; Newton-Toleranzen und Rundung begrenzen dies praktisch.
 Negative Schrittweiten dienen der Rückwärtsintegration. Beim Oszillator muss
 für Stabilität `|dt*omega|<2` gelten; kleine Energiefehler erfordern kleinere
 Schritte. Die Modelle erzwingen keine automatische Schrittweitenanpassung.
