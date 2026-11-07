@@ -1,6 +1,7 @@
 //! Physikalische Modelle und Simulationen für das az-Projekt.
 //!
-//! Punktmassenmodelle für freien Flug, konstante Beschleunigung und harmonische Oszillatoren.
+//! Punktmassenmodelle für freien Flug, konstante Beschleunigung und harmonische Oszillatoren,
+//! ein Spatial Hash (`alloc`) und XPBD-Distanzbedingungen.
 //! Mathematische Werkzeuge werden direkt aus einer festgelegten azmath-Revision
 //! bezogen; std/libm/micromath und alloc werden als Features weitergeleitet. Die gemeinsame
 //! Planung liegt unter <https://github.com/Andie2302/aztodo>.
@@ -17,4 +18,5 @@ mod error;
 pub mod mechanics;
 #[cfg(feature = "alloc")]
 pub mod spatial;
+pub mod xpbd;
 pub use error::PhysicsError;
