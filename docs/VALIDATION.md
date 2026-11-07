@@ -80,3 +80,28 @@ Ausgabe des f64-std-Laufs (t=10 s):
 Zustandsfehler: `max(|dq|/1 m, |dv|/(2 m/s))`. Maximale relative
 Energiefehler: bei Verlet etwa 0.0100/0.00250/0.000625, bei GL4 um 1e-15
 in diesen quadratischen f64-Referenzfällen. Das ist keine globale Energiegarantie.
+
+
+## Spatial Hash (GEO-001 / AZP-030)
+
+[PR #6](https://github.com/Andie2302/azphysics/pull/6), Code
+`74b1e2ba79c7d0ba499b9a2aac6342bc13382d6f`, Merge `de20812ac5ce38196f6da524ef075cf4489d40dd`.
+Alle 14 Jobs sowohl für [Push](https://github.com/Andie2302/azphysics/actions/runs/42323038136)
+als auch [PR](https://github.com/Andie2302/azphysics/actions/runs/42323046591)
+erfolgreich. Keine lokalen Tests; nur Formatierung angewendet.
+
+38 neue Tests mit std/libm + alloc (f32/f64, 2D/3D), ein Doctest und das
+CI-ausgeführte Beispiel `03_spatial_hash`: inklusive bestehender Tests
+**66 Tests inklusive Doctest** mit genauen Backends und alloc. Ohne alloc
+bleiben es 26 Tests. Reines micromath unterstützt nur f32; dort laufen
+20 Spatial-Tests plus drei Integrations-Smokes und der Doctest (24 insgesamt).
+Die Mechanik-Genauigkeitstests bleiben dort weiterhin deaktiviert.
+
+Brute-Force-Inklusion, deterministische Reihenfolge, Hash-Kollisionen,
+negative/Zell-/Floatgrenzen, ID-/Bereichsfehler, dynamische Updates, Entfernung
+und atomarer Neuaufbau sind geprüft. Die räumliche Indizierung nutzt keine
+näherungsweisen Transzendentalfunktionen. Eingaben bleiben auf den ausdrücklich
+dokumentierten Koordinatenbereich begrenzt; Kandidaten sind konservative
+Übermengen und keine exakten Kontakte. Speicher benötigt alloc, Embedded und
+MSRV 1.85 mit libm+alloc wurden erfolgreich gebaut. Ausführliche Entscheidung,
+API-Vertrag, Grenzen und Szenenzahlen: [SPATIAL.md](SPATIAL.md).

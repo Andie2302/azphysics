@@ -15,9 +15,10 @@ Zwei API-Varianten wurden für GEO-001 verglichen:
 
 Gewählt ist die zweite Variante: `azphysics::spatial`, optionales `alloc`,
 weiterhin `no_std`, f32/f64 und zunächst genau 2D/3D. Es entsteht keine Abhängigkeit
-von azmath zu azphysics und kein viertes Repository. Allgemeine AABB-Primitiven
-werden erst beim getrennten BVH-Paket AZP-031 anhand tatsächlicher Anforderungen
-zugeordnet. BVH ist keine Voraussetzung für diesen Index oder XPBD-Distanzbedingungen.
+von azmath zu azphysics und kein viertes Repository. Allgemeine AABB-Primitiven gehören bei Bedarf nach azmath; ihr konkretes API
+entsteht erst beim getrennten BVH-Paket AZP-031. Der dynamische BVH-Index mit
+Simulationsdaten bleibt in azphysics. BVH ist keine Voraussetzung für diesen
+Index oder XPBD-Distanzbedingungen.
 
 ## Vertrag
 
@@ -72,5 +73,20 @@ Nachbarn; jeder echte Nachbar wird gegen die Kandidaten geprüft. Die CI führt
 dieses Beispiel mit alloc und allen Backends aus. Die Anzahl ist ein struktureller
 Vergleich, kein Laufzeitbenchmark oder allgemeines Skalierungsversprechen.
 
-Tests werden gemäß Projektwunsch nicht lokal ausgeführt. CI- und Merge-Nachweise
-werden nach erfolgreichem Lauf in aztodo/STATUS.md festgehalten.
+Tests wurden gemäß Projektwunsch nicht lokal ausgeführt. Vor dem Merge waren
+alle 14 Jobs für [Push](https://github.com/Andie2302/azphysics/actions/runs/42323038136)
+und [PR](https://github.com/Andie2302/azphysics/actions/runs/42323046591)
+erfolgreich (28 Checks). [PR #6](https://github.com/Andie2302/azphysics/pull/6),
+geprüfter Code `74b1e2ba79c7d0ba499b9a2aac6342bc13382d6f`, Merge `de20812ac5ce38196f6da524ef075cf4489d40dd`.
+
+CI-Ausgabe des f32-Beispiels (übereinstimmend mit std und reinem micromath):
+
+| Partikel | Buckets | Alle möglichen Paare | Kandidaten | Echte Nachbarn |
+|---|---|---|---|---|
+| 64 | 64 | 2016 | 305 | 94 |
+| 256 | 128 | 32640 | 2867 | 472 |
+| 1024 | 512 | 523776 | 13115 | 1984 |
+
+Die Beispielszene ist ein 2D-Raster mit Abstand 0,5 m, Zellgröße 0,5 m und
+Suchradius 0,51 m. Jeder echte Nachbar ist enthalten; zusätzliche Kandidaten
+werden in der Narrow Phase ausgeschlossen. Die Werte gelten für diese Szene.
