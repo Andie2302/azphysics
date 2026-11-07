@@ -29,7 +29,7 @@ zwei Rust-1.85-Builds sowie Formatierung/Clippy/Rustdoc. Die präzisen Physiktes
 werden bei reinem micromath übersprungen; dort laufen nur die bisherigen
 Backend-/Integrations-Smoke-Tests. Build-Erfolg ist keine Genauigkeitsfreigabe.
 
-## Mathematische Grundlage
+## Historische mathematische Grundlage (PR #4)
 
 Cargo.toml und Cargo.lock binden azmath an
 `3c6068a5f218aaba940a85a73606c9f61c8ebdc9`.
@@ -43,3 +43,24 @@ Konventionen und Grenzen in [CONVENTIONS.md](CONVENTIONS.md): insbesondere
 keine automatische Schrittweitenanpassung und keine globale Energiegarantie
 für beliebige Kräfte oder Zeitabhängigkeiten. Die Referenzfälle sind ein
 gezielter Nachweis, keine vollständige Validierung sämtlicher Parameterwerte.
+
+## Gauss–Legendre-Vergleich (AZM-031)
+
+Aktuelle Git-Abhängigkeit: `75c5dc04c51ddf02568f15f4ab3c46f7ba4c2c7c`,
+[azmath PR #7](https://github.com/Andie2302/azmath/pull/7). Vor dem Merge waren
+alle 18 CI-Jobs erfolgreich; die 25 neuen Tests umfassen f32/f64-Ordnung 4,
+Zeitumkehr, quadratische Invarianten, nicht separierbare Hamilton-Systeme,
+nichtlineare/nichtautonome Gleichungen und Fehlerpfade.
+
+`tests/integrator_comparison.rs` ergänzt vier Tests (je zwei pro Präzision):
+Verlet-Ordnung 2 gegen GL-Ordnung 4 bei derselben analytischen Referenz sowie
+maximale Energieabweichung über 800 feste Schritte mit `omega*dt=0.5`.
+Die quadratische Oszillatorenergie ist ein spezieller Invariantentest, keine
+Garantie exakter Energieerhaltung für allgemeine nichtlineare Hamilton-Funktionen.
+Mit den vorhandenen Tests sind es 26 ohne alloc bzw. 27 mit alloc bei std/libm.
+
+`examples/02_integrator_comparison.rs` zeigt für 100/200/400 Schritte bis t=10 s
+Zustands- und Energiefehler sowie die Anzahl der rechten Seiten/Jacobi-Matrizen.
+Die CI führt dieses Beispiel mit std/libm und allen Features aus.
+Die Ausgabe ist kein Geschwindigkeitsbenchmark. Tests wurden nicht lokal
+ausgeführt; CI-Nachweis und Merge-Commit werden nach Abschluss in aztodo erfasst.

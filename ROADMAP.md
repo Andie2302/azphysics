@@ -7,6 +7,7 @@ Die zentrale Planung liegt in
 - AZP-002: Direkte azmath-Git-Abhängigkeit mit festem rev und Backend-/alloc-Weiterleitung geprüft.
 - AZP-010: SI-Konventionen, geprüfter Zustand und Fehlerdiagnosen implementiert.
 - AZP-020: Freier Flug, konstante Beschleunigung und harmonischer Oszillator mit azmath-Verlet implementiert.
+- AZM-031: Gauss–Legendre-RK4 aus azmath mit Verlet-Vergleich (Beispiel und f32/f64-Tests).
 - AZP-030/040: Räumliche Suche und XPBD.
 - AZP-051/050: Druckprojektion und APIC/FLIP.
 - AZP-060/070: Materialmodelle und spätere weitere Physikgebiete.

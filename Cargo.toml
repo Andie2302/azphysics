@@ -17,4 +17,4 @@ libm = ["azmath/libm"]
 micromath = ["azmath/micromath"]
 
 [dependencies]
-azmath = { git = "https://github.com/Andie2302/azmath", rev = "3c6068a5f218aaba940a85a73606c9f61c8ebdc9", default-features = false }
+azmath = { git = "https://github.com/Andie2302/azmath", rev = "75c5dc04c51ddf02568f15f4ab3c46f7ba4c2c7c", default-features = false }
