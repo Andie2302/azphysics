@@ -4,6 +4,13 @@ Version 0.0.1, experimentell und noch nicht auf crates.io veröffentlicht.
 
 ## Unveröffentlicht
 
+- XPBD-Fortsetzung ungeprüft: numerische Bereichsfehler werden nicht mehr als
+  Koinzidenz behandelt, positive Compliance/dt² darf nicht still unterlaufen;
+  Vorhersage, Lambda und Korrekturen werden vor der Zustandsübernahme auf
+  Endlichkeit geprüft. Vorhandene Slice-API bleibt erhalten.
+- Automatische Push-/PR-CI auf ausdrücklichen Projektwunsch deaktiviert;
+  Workflows nur manuell auslösbar. In dieser Sitzung keine Tests/Builds/Fuzzing.
+
 - AZP-040: Modul `xpbd` (ohne alloc) mit `DistanceConstraint`, `xpbd_step` und `max_constraint_error`: XPBD-Distanzbedingungen mit inversen Massen, Compliance, fixierten Teilchen und atomaren Schritten; Tests `tests/xpbd.rs`, Beschreibung in `docs/XPBD.md`. Neue `PhysicsError`-Varianten `InvalidConstraint`, `InvalidInverseMass`, `InvalidIterationCount`, `BufferMismatch`.
 
 - GEO-001/AZP-030: optionales alloc-Modul `spatial`, Spatial Hash für 2D/3D

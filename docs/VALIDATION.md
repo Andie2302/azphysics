@@ -1,5 +1,11 @@
 # Mechanik-Nachweise (2026-11-07)
 
+**Aktuelle Ausführungsregel D-013:** Keine Tests, kein Fuzzing, keine GitHub-Tests.
+Die nachfolgenden bisherigen Ergebnisse sind historische, standbezogene Nachweise.
+XPBD (AZP-040) ist neu implementiert und **ungeprüft**: keine Tests, Builds,
+Beispiel- oder CI-Ausführung. Automatische Workflows sind deaktiviert.
+Siehe [XPBD-Vertrag und offene Abnahme](XPBD.md).
+
 Historischer Modellstand: [azphysics PR #4](https://github.com/Andie2302/azphysics/pull/4),
 Commit `1856e1ff55b8651d7f664bc5f99ce540f16eab76`, gemergt als
 `1528bea62aba8a856b5cb9b39fae507d0d18e878`.

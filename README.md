@@ -78,6 +78,19 @@ Beispiel: `cargo run --locked --features alloc --example 03_spatial_hash`.
 [Vertrag, Paketentscheidung, Tests und Grenzen](docs/SPATIAL.md).
 Der Index benötigt `alloc`, bleibt aber mit libm/micromath `no_std`-fähig.
 
+## XPBD-Distanzbedingungen (implementiert, ungeprüft)
+
+`xpbd::DistanceConstraint`, `xpbd_step` und `max_constraint_error` bilden einen allokationsfreien
+XPBD-Schritt mit inversen Massen, Fixpunkten und Compliance/dt². Lambda wird
+innerhalb eines Schritts akkumuliert und vor jedem neuen Schritt zurückgesetzt.
+Positionen, Geschwindigkeiten und inverse Massen werden als Slices übergeben.
+Arbeitsbuffer kommen vom Aufrufer; Fehler erhalten Positionen/Geschwindigkeiten.
+
+[Vertrag, Grenzen und offene Abnahme](docs/XPBD.md). Das Kettenbeispiel
+`examples/04_xpbd_chain.rs` ist vorbereitet, wurde aber nicht ausgeführt.
+**Keine Tests, Builds oder Fuzzing für dieses Paket ausgeführt.** Die Workflows
+sind nur noch manuell auslösbar; automatische Push-/PR-CI ist deaktiviert.
+
 ## Features
 
 | azphysics | Weitergereicht an azmath | Verwendung |
@@ -102,7 +115,7 @@ cargo doc --locked --no-deps --all-features
 ```
 
 Das Embedded-Target benötigt `rustup target add thumbv7em-none-eabihf`.
-Die CI prüft die Backend-/alloc-Kombinationen, Builds ohne Backend, Embedded
+Die nur manuell auslösbare CI-Konfiguration enthält Prüfungen für Backend-/alloc-Kombinationen, Builds ohne Backend, Embedded
 mit libm und libm+alloc sowie Rust 1.85 mit std und libm+alloc. Die zwei
 Integrationstests (mit alloc drei) prüfen die Git-Abhängigkeit und Feature-
 Weiterleitung. Die Mechaniktests ergänzen physikalische Referenzlösungen und

@@ -20,10 +20,11 @@
 //!   `λ · ∇C / dt²` mit `∇ᵢC = n`.
 //! - **Fixierte Teilchen** (`w = 0`) bewegen sich nie; ihre Geschwindigkeit wird 0.
 //! - **Koinzidente Punkte** (Abstand exakt 0): die Richtung ist undefiniert, die Bedingung wird in
-//!   dieser Iteration übersprungen (keine Division durch null). Ist `wᵢ + wⱼ + α̃ = 0` (zwei
-//!   fixierte Teilchen, starr), wird ebenfalls übersprungen.
+//!   dieser Iteration übersprungen (keine Division durch null). Zwei fixierte
+//!   Endpunkte werden ebenfalls übersprungen; Lambda bleibt null.
 //! - **Atomarer Schritt:** Bei jedem Fehler bleiben `positions` und `velocities` unverändert.
-//! - **Genauigkeit:** Mit nachgiebiger Bedingung ist ein Schritt für lineare Federn identisch mit
+//! - **Genauigkeit (ungeprüft):** Bei einer isolierten linearen Feder mit fester
+//!   radialer Richtung ohne Durchqueren entspricht ein nachgiebiger Schritt
 //!   dem impliziten Euler-Verfahren (Ordnung 1 in `dt`); starre Bedingungen werden nur bis zum
 //!   Residuum nach `iterations` Iterationen erfüllt (siehe [`XpbdStats::max_constraint_error`]).
 use crate::{PhysicsError, Real};
@@ -83,22 +84,37 @@ pub struct XpbdStats<T> {
     pub iterations: usize,
 }
 
-/// Euklidische Länge von `d` und Einheitsrichtung; `None` bei Länge 0 oder nichtendlichem Ergebnis.
+/// Euklidische Länge und Einheitsrichtung; `None` nur bei Koinzidenz.
+/// Nichtendliche oder nicht darstellbare Längen sind Fehler, keine Koinzidenz.
 /// Überlaufsicher durch Skalierung mit der größten Komponente.
-fn length_and_direction<T: Real, const D: usize>(d: &[T; D]) -> Option<(T, [T; D])> {
+fn length_and_direction<T: Real, const D: usize>(
+    d: &[T; D],
+) -> Result<Option<(T, [T; D])>, PhysicsError> {
+    if !d.iter().all(|v| v.is_finite()) {
+        return Err(PhysicsError::NotFinite);
+    }
     let scale = d.iter().fold(T::ZERO, |m, &v| m.max(v.abs()));
-    if scale == T::ZERO || !scale.is_finite() {
-        return None;
+    if scale == T::ZERO {
+        return Ok(None);
     }
     let sum = d.iter().fold(T::ZERO, |s, &v| {
         let q = v / scale;
         s + q * q
     });
-    let len = scale * sum.sqrt();
+    let len = if D == 1 { scale } else { scale * sum.sqrt() };
     if !len.is_finite() || len == T::ZERO {
-        return None;
+        return Err(PhysicsError::NotFinite);
     }
-    Some((len, core::array::from_fn(|i| d[i] / len)))
+    Ok(Some((len, core::array::from_fn(|i| d[i] / len))))
+}
+
+fn scaled_compliance<T: Real>(compliance: T, dt: T) -> Result<T, PhysicsError> {
+    // Avoid forming dt² when only the quotient must be representable.
+    let alpha = (compliance / dt) / dt;
+    if !alpha.is_finite() || (compliance > T::ZERO && alpha == T::ZERO) {
+        return Err(PhysicsError::NumericalRange);
+    }
+    Ok(alpha)
 }
 
 fn finite_all<T: Real, const D: usize>(v: &[[T; D]]) -> bool {
@@ -123,7 +139,7 @@ pub fn max_constraint_error<T: Real, const D: usize>(
             return Err(PhysicsError::InvalidConstraint);
         }
         let d: [T; D] = core::array::from_fn(|i| positions[c.a][i] - positions[c.b][i]);
-        let len = length_and_direction(&d).map_or(T::ZERO, |(l, _)| l);
+        let len = length_and_direction(&d)?.map_or(T::ZERO, |(l, _)| l);
         let e = (len - c.rest_length).abs();
         if !e.is_finite() {
             return Err(PhysicsError::NotFinite);
@@ -141,10 +157,13 @@ pub fn max_constraint_error<T: Real, const D: usize>(
 /// - `dt`: Zeitschritt in s, endlich und `> 0`; `iterations >= 1`.
 /// - `predicted`: Arbeitsfeld mit `n` Einträgen; `lambda`: Arbeitsfeld mit `constraints.len()`
 ///   Einträgen. Beide werden überschrieben, ihr Inhalt vor dem Aufruf ist egal.
+///   Lambda wird nur innerhalb dieses Schritts akkumuliert, kein Warmstart.
+///   Bei Fehlern sind Arbeitsbuffer unspezifiziert. Ohne Bedingungen: null Projektionsdurchläufe.
 ///
 /// Fehler ([`PhysicsError`]): `InvalidDimension` (`D = 0`), `BufferMismatch`, `InvalidTimeStep`,
 /// `InvalidIterationCount`, `InvalidInverseMass`, `InvalidConstraint` (Index außerhalb),
-/// `NotFinite` (Zustand, Beschleunigung oder Rechenwert). Bei jedem Fehler bleibt der Zustand
+/// `NotFinite` (Zustand, Beschleunigung oder Rechenwert), `NumericalRange`
+/// (positive Compliance/dt² nicht darstellbar). Bei jedem Fehler bleibt der Zustand
 /// unverändert.
 #[allow(clippy::too_many_arguments)]
 pub fn xpbd_step<T: Real, const D: usize>(
@@ -194,6 +213,10 @@ pub fn xpbd_step<T: Real, const D: usize>(
         return Err(PhysicsError::NotFinite);
     }
 
+    for c in constraints {
+        scaled_compliance(c.compliance, dt)?;
+    }
+
     // 1. Vorhersage
     for i in 0..n {
         for k in 0..D {
@@ -204,26 +227,43 @@ pub fn xpbd_step<T: Real, const D: usize>(
             };
         }
     }
+    if !finite_all(predicted) {
+        return Err(PhysicsError::NotFinite);
+    }
     // 2. Iterationen
     lambda.fill(T::ZERO);
-    let dt2 = dt * dt;
-    for _ in 0..iterations {
+    let passes = if constraints.is_empty() { 0 } else { iterations };
+    for _ in 0..passes {
         for (c, lam) in constraints.iter().zip(lambda.iter_mut()) {
             let (wa, wb) = (inverse_masses[c.a], inverse_masses[c.b]);
-            let alpha = c.compliance / dt2;
-            let denom = wa + wb + alpha;
-            if denom == T::ZERO || !denom.is_finite() {
+            if wa == T::ZERO && wb == T::ZERO {
                 continue;
             }
+            let alpha = scaled_compliance(c.compliance, dt)?;
+            let denom = wa + wb + alpha;
+            if !denom.is_finite() {
+                return Err(PhysicsError::NotFinite);
+            }
             let d: [T; D] = core::array::from_fn(|k| predicted[c.a][k] - predicted[c.b][k]);
-            let Some((len, dir)) = length_and_direction(&d) else {
+            let Some((len, dir)) = length_and_direction(&d)? else {
                 continue;
             };
             let dl = (-(len - c.rest_length) - alpha * *lam) / denom;
-            *lam += dl;
-            for k in 0..D {
-                predicted[c.a][k] += wa * dl * dir[k];
-                predicted[c.b][k] -= wb * dl * dir[k];
+            let next_lambda = *lam + dl;
+            if !dl.is_finite() || !next_lambda.is_finite() {
+                return Err(PhysicsError::NotFinite);
+            }
+            *lam = next_lambda;
+            for (k, &direction) in dir.iter().enumerate() {
+                if wa > T::ZERO {
+                    predicted[c.a][k] += wa * dl * direction;
+                }
+                if wb > T::ZERO {
+                    predicted[c.b][k] -= wb * dl * direction;
+                }
+            }
+            if !predicted[c.a].iter().chain(&predicted[c.b]).all(|x| x.is_finite()) {
+                return Err(PhysicsError::NotFinite);
             }
         }
     }
@@ -240,7 +280,7 @@ pub fn xpbd_step<T: Real, const D: usize>(
     }
     let stats = XpbdStats {
         max_constraint_error: max_constraint_error(predicted, constraints)?,
-        iterations,
+        iterations: passes,
     };
     for i in 0..n {
         for k in 0..D {

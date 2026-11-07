@@ -1,5 +1,13 @@
 # XPBD-Distanzbedingungen (AZP-040)
 
+**Implementiert, ungeprüft.** In dieser Sitzung wurden keine Tests, Builds,
+Prüfwerkzeuge, Beispiele, Fuzzing-Läufe oder GitHub-CI ausgeführt. Vorhandener
+Code und Tests aus dem parallel gepushten Stand bleiben erhalten. Historische
+CI-Nachweise anderer Pakete sind keine Freigabe dieser Änderungen.
+
+Automatische Push-/PR-Workflows sind deaktiviert. Ausschließlich direkt auf
+master arbeiten, keine Branches oder Pull Requests; neue Commits mit `[skip ci]`.
+
 Modul `azphysics::xpbd`, ohne `alloc`, generisch über `f32`/`f64` und die Dimension `D`.
 Der Aufrufer stellt alle Felder bereit (Positionen, Geschwindigkeiten, inverse Massen,
 Bedingungen, zwei Arbeitsfelder); es wird nichts allokiert.
@@ -22,12 +30,12 @@ Bedingungen, zwei Arbeitsfelder); es wird nichts allokiert.
 | Kraft einer Bedingung | `λ·∇C/dt²` mit `∇ᵢC = n` |
 | Fixierte Teilchen | bewegen sich nie, Geschwindigkeit 0, Schwerkraft wirkt nicht |
 | Koinzidente Punkte | Richtung undefiniert: Bedingung wird in dieser Iteration übersprungen |
-| Zwei fixierte Teilchen, starr | `Σw + α̃ = 0`: übersprungen |
+| Zwei fixierte Teilchen | immer übersprungen, Lambda bleibt null; geometrisches Residuum bleibt sichtbar |
 | Fehler | atomar: bei jedem Fehler bleibt der Zustand unverändert |
 | Zeitschritt | `dt` endlich und `> 0`; negative Schritte sind hier nicht definiert |
 | Nicht enthalten | Kontakte, räumliche Suche, Dämpfung, Reibung |
 
-## Nachweise (Tests in `tests/xpbd.rs`)
+## Vorbereitete Abnahme (vorhandene Tests in `tests/xpbd.rs`, nicht ausgeführt)
 
 - Zwei Teilchen, starr: exakte Projektion in einer Iteration; ungleiche Massen
   (Verschiebung ∝ `w`, Impulserhaltung `Σ v/w = 0`); Compliance mit exaktem Restfehler
@@ -42,5 +50,30 @@ Bedingungen, zwei Arbeitsfelder); es wird nichts allokiert.
 - Eingabefehler (`dt`, Iterationen, inverse Massen, Bedingungen, Feldlängen, `D = 0`, NaN/Inf,
   Überlauf) mit unverändertem Zustand.
 
-Die Tests wurden in der Arbeitssitzung nicht lokal ausgeführt; die Erwartungswerte sind
-analytisch hergeleitet. Maßgeblich ist die CI.
+Die Tests wurden in dieser Sitzung nicht ausgeführt. Die beschriebenen Erwartungen
+sind analytische Kriterien, keine hier gemessenen Ergebnisse. Auch GitHub-CI wird
+nicht gestartet; eine spätere Ausführung braucht einen ausdrücklichen neuen Auftrag.
+
+
+## Numerische Fehlerbehandlung und Grenzen
+
+Die vorhandene Slice-API (`xpbd_step`, `DistanceConstraint`, `XpbdStats`,
+`max_constraint_error`) bleibt erhalten. Nichtendliche Differenzen oder Längen
+werden als Fehler gemeldet und nicht als koinzidente Punkte verschluckt.
+`alpha_tilde` wird als `(compliance/dt)/dt` gebildet; nicht darstellbare positive
+Werte liefern `PhysicsError::NumericalRange`. Nichtendliche Nenner, Lambda-Werte,
+Positionskorrekturen oder rekonstruierte Geschwindigkeiten führen zum Fehler,
+ohne öffentliche Positionen/Geschwindigkeiten zu übernehmen. Arbeitsbuffer sind
+bei Fehlern unspezifiziert. Ohne Bedingungen laufen null Projektionsdurchläufe.
+
+`max_constraint_error` ist ein geometrisches Residuum in m. Bei Compliance ist
+eine Dehnung erlaubt; `Ok` bedeutet einen endlichen Schritt und keine automatisch
+kleinen Residuen. Die Constraint-Reihenfolge beeinflusst endliche Iterationsläufe.
+Der Prädiktor und die Projektion versprechen keine Energieerhaltung oder Zeitumkehr.
+Die Gleichheit mit implizitem Euler gilt für eine isolierte lineare Feder bei
+fester radialer Richtung ohne Durchqueren des Fixpunkts, nicht für beliebige
+gekoppelte/nichtlineare Systeme. Micromath unterstützt nur f32 und benötigt bei
+einer späteren Freigabe eigene Genauigkeitsbudgets.
+
+`examples/04_xpbd_chain.rs` ist vorbereitet und wurde nicht ausgeführt.
+Kontakte, Reibung, CCD, Warmstarts und räumliche Kopplung gehören nicht zu AZP-040.
