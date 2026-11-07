@@ -15,4 +15,6 @@ pub use azmath::Real;
 
 mod error;
 pub mod mechanics;
+#[cfg(feature = "alloc")]
+pub mod spatial;
 pub use error::PhysicsError;

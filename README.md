@@ -67,6 +67,17 @@ Negative Schrittweiten dienen der Rückwärtsintegration. Beim Oszillator muss
 für Stabilität `|dt*omega|<2` gelten; kleine Energiefehler erfordern kleinere
 Schritte. Die Modelle erzwingen keine automatische Schrittweitenanpassung.
 
+## Räumliche Partikelsuche (optional alloc)
+
+`spatial::SpatialHash<T, D>` besitzt 2D-/3D-Positionskopien mit stabilen IDs.
+Einfügen, Update, Entfernung, atomarer Neuaufbau und deterministische Radius-/
+Paarkandidaten sind verfügbar. Kandidaten sind konservative Übermengen; eine
+exakte Distanz-/Kontaktprüfung folgt separat. Hash-Kollisionen verlieren keine Punkte.
+
+Beispiel: `cargo run --locked --features alloc --example 03_spatial_hash`.
+[Vertrag, Paketentscheidung, Tests und Grenzen](docs/SPATIAL.md).
+Der Index benötigt `alloc`, bleibt aber mit libm/micromath `no_std`-fähig.
+
 ## Features
 
 | azphysics | Weitergereicht an azmath | Verwendung |

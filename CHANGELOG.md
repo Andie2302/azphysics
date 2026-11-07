@@ -4,6 +4,13 @@ Version 0.0.1, experimentell und noch nicht auf crates.io veröffentlicht.
 
 ## Unveröffentlicht
 
+- GEO-001/AZP-030: optionales alloc-Modul `spatial`, Spatial Hash für 2D/3D
+  mit stabilen IDs, dynamischen Updates und atomarem Neuaufbau.
+- Deterministische konservative Radius-/Paarkandidaten, begrenzte Zellabfragen
+  mit Scan-Fallback und explizite Eingabe-/Bereichsfehler.
+- 38 f32/f64-/Brute-Force-Tests sowie ein CI-ausgeführtes Beispiel.
+
+
 - SI-/Koordinaten-/Zeitkonventionen und geprüfter Position-Geschwindigkeit-State.
 - Freie Punktmasse, konstante Beschleunigung und harmonischer Oszillator mit
   Masse, Federkonstante und Gleichgewichtslage.

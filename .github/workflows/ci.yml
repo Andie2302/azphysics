@@ -40,6 +40,8 @@ jobs:
         if: ${{ matrix.runtime }}
       - run: cargo run --locked ${{ matrix.flags }} --example 02_integrator_comparison
         if: ${{ matrix.runtime && !contains(matrix.name, 'micromath') }}
+      - run: cargo run --locked ${{ matrix.flags }} --example 03_spatial_hash
+        if: ${{ contains(matrix.name, 'alloc') && matrix.runtime || matrix.name == 'all' }}
       - run: cargo test --locked --no-run ${{ matrix.flags }}
         if: ${{ !matrix.runtime }}
   embedded:
