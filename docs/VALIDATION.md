@@ -1,6 +1,6 @@
 # Mechanik-Nachweise (2026-11-07)
 
-Code-Stand: [azphysics PR #4](https://github.com/Andie2302/azphysics/pull/4),
+Historischer Modellstand: [azphysics PR #4](https://github.com/Andie2302/azphysics/pull/4),
 Commit `1856e1ff55b8651d7f664bc5f99ce540f16eab76`, gemergt als
 `1528bea62aba8a856b5cb9b39fae507d0d18e878`.
 
@@ -8,7 +8,7 @@ Die Tests wurden gemäß Projekt-Arbeitsweise **nicht lokal ausgeführt**.
 Die GitHub-CI war vor dem Merge für Push und PR vollständig grün:
 [PR-Lauf](https://github.com/Andie2302/azphysics/actions/runs/42314757082).
 
-## Tests und Build-Prüfungen
+## Tests und Build-Prüfungen (historischer Stand PR #4)
 
 - 20 Mechaniktests: zehn für f32 und zehn für f64, mit std/libm.
 - Freier Flug: analytische Bahn, Geschwindigkeit, Impuls und kinetische Energie.
@@ -63,4 +63,20 @@ Mit den vorhandenen Tests sind es 26 ohne alloc bzw. 27 mit alloc bei std/libm.
 Zustands- und Energiefehler sowie die Anzahl der rechten Seiten/Jacobi-Matrizen.
 Die CI führt dieses Beispiel mit std/libm und allen Features aus.
 Die Ausgabe ist kein Geschwindigkeitsbenchmark. Tests wurden nicht lokal
-ausgeführt; CI-Nachweis und Merge-Commit werden nach Abschluss in aztodo erfasst.
+ausgeführt. [PR #5](https://github.com/Andie2302/azphysics/pull/5), Code-Commit
+`a674f7c54b70537800fe7c570a950a58b6a5222b`, Merge
+`5ebcc1d51d5dec9727fa96df1b84a464dd8e184e`: alle 14 Jobs sowohl für
+[Push](https://github.com/Andie2302/azphysics/actions/runs/42320436683) als auch
+[PR](https://github.com/Andie2302/azphysics/actions/runs/42320450164) erfolgreich.
+
+Ausgabe des f64-std-Laufs (t=10 s):
+
+| Schritte | Zustandsfehler Verlet | Zustandsfehler GL4 | Kraftauswertungen Verlet | RHS / Jacobi GL4 |
+|---|---|---|---|---|
+| 100 | 3.079231e-2 | 4.047834e-5 | 101 | 600 / 200 |
+| 200 | 7.630562e-3 | 2.534448e-6 | 201 | 1200 / 400 |
+| 400 | 1.903389e-3 | 1.584738e-7 | 401 | 2400 / 800 |
+
+Zustandsfehler: `max(|dq|/1 m, |dv|/(2 m/s))`. Maximale relative
+Energiefehler: bei Verlet etwa 0.0100/0.00250/0.000625, bei GL4 um 1e-15
+in diesen quadratischen f64-Referenzfällen. Das ist keine globale Energiegarantie.
