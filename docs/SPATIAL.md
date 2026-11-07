@@ -62,11 +62,12 @@ periodischen Ränder, CCD, AABB-/Mesh-/Ray-Abfragen oder no-alloc-Variante in AZ
 Konstruktorfehler und drei Szenengrößen. Feste Seeds, Brute-Force-Radius-/Paarreferenzen,
 Zell-/Floatgrenzen, negative Koordinaten, Koinzidenz, Hash-Kollisionen, Updates,
 Entfernung, atomarer Neuaufbau, stabile Reihenfolge, NaN/Inf und Bereichsgrenzen.
-Der Test läuft mit alloc und jedem Backend, einschließlich micromath; es werden
+Mit alloc und std/libm laufen alle 38 Tests; reines micromath unterstützt nur
+f32 und führt deshalb die 18 f32-Fälle plus zwei allgemeine Tests aus. Es werden
 keine näherungsweisen Transzendentalfunktionen für die Zellzuordnung verwendet.
 
 `cargo run --locked --features alloc --example 03_spatial_hash` zeigt bei
-64/256/1024 Partikeln Bucketzahl, alle möglichen Paare, Kandidaten und echte
+64/256/1024 f32-Partikeln Bucketzahl, alle möglichen Paare, Kandidaten und echte
 Nachbarn; jeder echte Nachbar wird gegen die Kandidaten geprüft. Die CI führt
 dieses Beispiel mit alloc und allen Backends aus. Die Anzahl ist ein struktureller
 Vergleich, kein Laufzeitbenchmark oder allgemeines Skalierungsversprechen.

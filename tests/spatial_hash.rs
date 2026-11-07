@@ -262,38 +262,40 @@ macro_rules! cases {
     };
 }
 cases!(f32_2d, f32, 2);
+#[cfg(any(feature = "std", feature = "libm"))]
 cases!(f64_2d, f64, 2);
 cases!(f32_3d, f32, 3);
+#[cfg(any(feature = "std", feature = "libm"))]
 cases!(f64_3d, f64, 3);
 
 #[test]
 fn constructor_rejects_invalid_shapes_and_scales() {
     assert_eq!(
-        SpatialHash::<f64, 0>::new(1.0).unwrap_err(),
+        SpatialHash::<f32, 0>::new(1.0).unwrap_err(),
         SpatialError::InvalidDimension
     );
     assert_eq!(
-        SpatialHash::<f64, 1>::new(1.0).unwrap_err(),
+        SpatialHash::<f32, 1>::new(1.0).unwrap_err(),
         SpatialError::InvalidDimension
     );
     assert_eq!(
-        SpatialHash::<f64, 4>::new(1.0).unwrap_err(),
+        SpatialHash::<f32, 4>::new(1.0).unwrap_err(),
         SpatialError::InvalidDimension
     );
-    for size in [0.0, -0.0, -1.0, f64::NAN, f64::INFINITY] {
+    for size in [0.0, -0.0, -1.0, f32::NAN, f32::INFINITY] {
         assert_eq!(
-            SpatialHash::<f64, 2>::new(size).unwrap_err(),
+            SpatialHash::<f32, 2>::new(size).unwrap_err(),
             SpatialError::InvalidCellSize
         );
     }
     for count in [0, 3, 63] {
         assert_eq!(
-            SpatialHash::<f64, 2>::with_bucket_count(1.0, count).unwrap_err(),
+            SpatialHash::<f32, 2>::with_bucket_count(1.0, count).unwrap_err(),
             SpatialError::InvalidBucketCount
         );
     }
     assert_eq!(
-        SpatialHash::<f64, 2>::with_bucket_count(1.0, 1_usize << (usize::BITS - 1)).unwrap_err(),
+        SpatialHash::<f32, 2>::with_bucket_count(1.0, 1_usize << (usize::BITS - 1)).unwrap_err(),
         SpatialError::CapacityOverflow
     );
 }
@@ -304,7 +306,7 @@ fn sparse_scenes_reduce_candidate_count_at_three_sizes() {
         let points: Vec<_> = (0..n)
             .map(|id| Particle {
                 id,
-                position: [(id % 32) as f64 * 0.5, (id / 32) as f64 * 0.5],
+                position: [(id % 32) as f32 * 0.5, (id / 32) as f32 * 0.5],
             })
             .collect();
         let mut index = SpatialHash::new(0.5).unwrap();

@@ -8,7 +8,7 @@ fn main() -> Result<(), azphysics::spatial::SpatialError> {
         let points: Vec<_> = (0..n)
             .map(|id| Particle {
                 id,
-                position: [(id % 32) as f64 * 0.5, (id / 32) as f64 * 0.5],
+                position: [(id % 32) as f32 * 0.5, (id / 32) as f32 * 0.5],
             })
             .collect();
         let mut index = SpatialHash::new(0.5)?;

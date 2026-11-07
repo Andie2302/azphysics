@@ -89,7 +89,7 @@ struct Record<T, const D: usize> {
 /// ```
 /// # #[cfg(any(feature = "std", feature = "libm", feature = "micromath"))] {
 /// use azphysics::spatial::{Particle, SpatialHash};
-/// let mut index = SpatialHash::<f64, 2>::new(0.5).unwrap();
+/// let mut index = SpatialHash::<f32, 2>::new(0.5).unwrap();
 /// index.insert(Particle { id: 42, position: [0.0, 0.0] }).unwrap();
 /// index.insert(Particle { id: 7, position: [0.2, 0.0] }).unwrap();
 /// assert_eq!(index.candidate_pairs(0.3).unwrap(), vec![(7, 42)]);
