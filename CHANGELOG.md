@@ -4,6 +4,8 @@ Version 0.0.1, experimentell und noch nicht auf crates.io veröffentlicht.
 
 ## Unveröffentlicht
 
+- AZP-040: Modul `xpbd` (ohne alloc) mit `DistanceConstraint`, `xpbd_step` und `max_constraint_error`: XPBD-Distanzbedingungen mit inversen Massen, Compliance, fixierten Teilchen und atomaren Schritten; Tests `tests/xpbd.rs`, Beschreibung in `docs/XPBD.md`. Neue `PhysicsError`-Varianten `InvalidConstraint`, `InvalidInverseMass`, `InvalidIterationCount`, `BufferMismatch`.
+
 - GEO-001/AZP-030: optionales alloc-Modul `spatial`, Spatial Hash für 2D/3D
   mit stabilen IDs, dynamischen Updates und atomarem Neuaufbau.
 - Deterministische konservative Radius-/Paarkandidaten, begrenzte Zellabfragen

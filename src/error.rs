@@ -18,6 +18,15 @@ pub enum PhysicsError {
     NotFinite,
     /// Eine benötigte positive Modellskala ist im Zahlentyp nicht darstellbar.
     NumericalRange,
+    /// Ungültige Bedingung: gleiche oder unbekannte Teilchen, negative oder nichtendliche
+    /// Ruhelänge bzw. Compliance.
+    InvalidConstraint,
+    /// Inverse Masse muss endlich und nichtnegativ sein (0 = fixiertes Teilchen).
+    InvalidInverseMass,
+    /// Mindestens eine Solver-Iteration ist erforderlich.
+    InvalidIterationCount,
+    /// Längen von Teilchen-, Geschwindigkeits-, Massen- oder Arbeitsfeldern passen nicht zusammen.
+    BufferMismatch,
     /// Fehler des mathematischen Integrators; letzter vollständiger Schritt bleibt erhalten.
     Integration(azmath::ode::OdeError),
 }
@@ -35,6 +44,14 @@ impl fmt::Display for PhysicsError {
             Self::InvalidStepCount => f.write_str("mindestens ein Zeitschritt erforderlich"),
             Self::NotFinite => f.write_str("nichtendlicher Zustand, Parameter oder Rechenwert"),
             Self::NumericalRange => f.write_str("Modellskala im Zahlentyp nicht darstellbar"),
+            Self::InvalidConstraint => f.write_str(
+                "Bedingung ungültig: gleiche/unbekannte Teilchen oder negative bzw. nichtendliche Ruhelänge/Compliance",
+            ),
+            Self::InvalidInverseMass => {
+                f.write_str("inverse Masse muss endlich und nichtnegativ sein")
+            }
+            Self::InvalidIterationCount => f.write_str("mindestens eine Iteration erforderlich"),
+            Self::BufferMismatch => f.write_str("Feldlängen passen nicht zusammen"),
             Self::Integration(e) => write!(f, "Integration: {e}"),
         }
     }
